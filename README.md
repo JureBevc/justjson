@@ -20,12 +20,20 @@ It is so good, yet so simple, you will wonder how come no one thought of this be
 - 🥇 **Best practices**: Yes, you will practice JSON all the time.
 - 🌍 **Widespread adoption**: 100% of developers in my home office use and enjoy JustJSON.
 
+## Usage
+To build your website with JustJSON, simply run the following command.
+```
+./JustJSON ./website.json
+```
 
-# Examples
+This will generate HTML, CSS and Javascript files in the `./build` directory.
+
+
+## Examples
 
 You can check out the [example](https://github.com/JureBevc/justjson/tree/main/example) folder to see the full demo, but here are some snippets to give you an idea what's it like programming with JustJSON.
 
-## HTML
+### HTML
 
 ```json
 {
@@ -62,7 +70,7 @@ You can check out the [example](https://github.com/JureBevc/justjson/tree/main/e
 }
 ```
 
-## CSS
+### CSS
 
 ```json
 {
@@ -80,7 +88,7 @@ You can check out the [example](https://github.com/JureBevc/justjson/tree/main/e
 }
 ```
 
-## JavaScript
+### JavaScript
 
 ```json
 {
