@@ -1,12 +1,6 @@
-let x = 6
-const y = 9
-function add(a,b){
-return a + b;
+let counter = 0
+function incrementCounter(){
+counter = counter + 1
+document.getElementById('counter-display').innerText = counter
 }
-add(x,y);
-if(5 == 5){
-alert('Javascript works!');}else{
-alert('Javascript still works!');}
-for(let i = 0;i < 10;i = i + 1){
-x = i
-}
+document.getElementById('increment-btn').addEventListener('click',incrementCounter);

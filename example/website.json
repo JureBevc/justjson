@@ -10,7 +10,7 @@
                         {
                             "tag": "title",
                             "elements": [
-                                "No big deal, just JSON"
+                                "Increment Counter"
                             ]
                         },
                         {
@@ -25,6 +25,19 @@
                                     "value": "style.css"
                                 }
                             ]
+                        },
+                        {
+                            "tag": "script",
+                            "attributes": [
+                                {
+                                    "name": "src",
+                                    "value": "script.js"
+                                },
+                                {
+                                    "name": "defer",
+                                    "value": "1"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -32,15 +45,45 @@
                     "tag": "body",
                     "elements": [
                         {
-                            "tag": "p",
+                            "tag": "h1",
+                            "elements": [
+                                "{ JustJSON }"
+                            ]
+                        },
+                        {
+                            "tag": "h1",
                             "attributes": [
                                 {
-                                    "name": "class",
-                                    "value": "example-class"
+                                    "name": "style",
+                                    "value": "margin-top: 100px"
                                 }
                             ],
                             "elements": [
-                                "No big deal, just JSON"
+                                "Counter"
+                            ]
+                        },
+                        {
+                            "tag": "div",
+                            "attributes": [
+                                {
+                                    "name": "id",
+                                    "value": "counter-display"
+                                }
+                            ],
+                            "elements": [
+                                "0"
+                            ]
+                        },
+                        {
+                            "tag": "button",
+                            "attributes": [
+                                {
+                                    "name": "id",
+                                    "value": "increment-btn"
+                                }
+                            ],
+                            "elements": [
+                                "Increment"
                             ]
                         }
                     ]
@@ -52,10 +95,37 @@
             "name": "style.css",
             "content": {
                 "body": {
-                    "font-size": "40px"
+                    "font-family": "Arial, sans-serif",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "align-items": "center",
+                    "background-color": "#f4f4f4",
+                    "padding-top": "20px",
+                    "color": "#333"
                 },
-                ".example-class": {
-                    "color": "red"
+                "h1": {
+                    "font-size": "2rem",
+                    "margin-bottom": "1rem"
+                },
+                "#counter-display": {
+                    "font-size": "3rem",
+                    "margin-bottom": "1rem",
+                    "color": "#007bff"
+                },
+                "button": {
+                    "font-size": "1.5rem",
+                    "padding": "10px 20px",
+                    "background-color": "#007bff",
+                    "color": "#fff",
+                    "border": "none",
+                    "cursor": "pointer"
+                },
+                "button:hover": {
+                    "background-color": "#2f9fff"
+                },
+                "button:active": {
+                    "background-color": "#007bff",
+                    "padding": "8px 18px"
                 }
             }
         },
@@ -65,89 +135,37 @@
             "commands": [
                 {
                     "type": "let",
-                    "name": "x",
-                    "value": "6"
-                },
-                {
-                    "type": "const",
-                    "name": "y",
-                    "value": "9"
+                    "name": "counter",
+                    "value": "0"
                 },
                 {
                     "type": "function",
-                    "name": "add",
-                    "parameters": [
-                        "a",
-                        "b"
-                    ],
+                    "name": "incrementCounter",
+                    "parameters": [],
                     "commands": [
                         {
-                            "type": "return",
+                            "type": "set",
+                            "variable": "counter",
                             "value": {
                                 "type": "operator",
                                 "operator": "+",
-                                "left": "a",
-                                "right": "b"
+                                "left": "counter",
+                                "right": "1"
                             }
+                        },
+                        {
+                            "type": "set",
+                            "variable": "document.getElementById('counter-display').innerText",
+                            "value": "counter"
                         }
                     ]
                 },
                 {
                     "type": "call",
-                    "function": "add",
+                    "function": "document.getElementById('increment-btn').addEventListener",
                     "parameters": [
-                        "x",
-                        "y"
-                    ]
-                },
-                {
-                    "type": "if",
-                    "condition": {
-                        "type": "operator",
-                        "operator": "==",
-                        "left": "5",
-                        "right": "5"
-                    },
-                    "then": {
-                        "type": "call",
-                        "function": "alert",
-                        "parameters": "'Javascript works!'"
-                    },
-                    "else": {
-                        "type": "call",
-                        "function": "alert",
-                        "parameters": "'Javascript still works!'"
-                    }
-                },
-                {
-                    "type": "for",
-                    "initial": {
-                        "type": "let",
-                        "name": "i",
-                        "value": "0"
-                    },
-                    "condition": {
-                        "type": "operator",
-                        "operator": "<",
-                        "left": "i",
-                        "right": "10"
-                    },
-                    "increment": {
-                        "type": "set",
-                        "variable": "i",
-                        "value": {
-                            "type": "operator",
-                            "operator": "+",
-                            "left": "i",
-                            "right": "1"
-                        }
-                    },
-                    "commands": [
-                        {
-                            "type": "set",
-                            "variable": "x",
-                            "value": "i"
-                        }
+                        "'click'",
+                        "incrementCounter"
                     ]
                 }
             ]

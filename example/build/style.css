@@ -1,6 +1,33 @@
 body {
-	font-size: 40px;
+	color: #333;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #f4f4f4;
+	padding-top: 20px;
 }
-.example-class {
-	color: red;
+h1 {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
+#counter-display {
+	margin-bottom: 1rem;
+	color: #007bff;
+	font-size: 3rem;
+}
+button {
+	cursor: pointer;
+	font-size: 1.5rem;
+	padding: 10px 20px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+}
+button:hover {
+	background-color: #2f9fff;
+}
+button:active {
+	background-color: #007bff;
+	padding: 8px 18px;
 }
