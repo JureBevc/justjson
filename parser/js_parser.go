@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strconv"
 )
 
@@ -30,6 +31,7 @@ func parseJSCommand(commandData interface{}) (string, bool) {
 
 	commandMap, ok := commandData.(map[string]interface{})
 	if !ok {
+		debug.PrintStack()
 		log.Fatalf("Failed to parse command %s\n", commandData)
 	}
 
@@ -46,14 +48,18 @@ func parseJSCommand(commandData interface{}) (string, bool) {
 	case "let":
 		nameField := commandMap["name"].(string)
 		valueField, _ := parseJSCommand(commandMap["value"])
-		result += fmt.Sprintf("let %s = %s\n", nameField, valueField)
+		result += fmt.Sprintf("let %s = %s", nameField, valueField)
 
 	case "const":
 		nameField := commandMap["name"].(string)
 		valueField, _ := parseJSCommand(commandMap["value"])
-		result += fmt.Sprintf("const %s = %s\n", nameField, valueField)
+		result += fmt.Sprintf("const %s = %s", nameField, valueField)
 
 	case "set":
+		variableField := commandMap["variable"].(string)
+		valueField, _ := parseJSCommand(commandMap["value"])
+
+		result += fmt.Sprintf("%s = %s", variableField, valueField)
 
 	case "operator":
 		operatorField := commandMap["operator"].(string)
@@ -63,16 +69,103 @@ func parseJSCommand(commandData interface{}) (string, bool) {
 		result += fmt.Sprintf("%s %s %s", leftField, operatorField, rightField)
 
 	case "if":
+		conditionField, _ := parseJSCommand(commandMap["condition"])
+		thenCommands, isList := commandMap["then"].([]interface{})
+		thenField := ""
+		if isList {
+			for _, thenCommand := range thenCommands {
+				thenCommandString, _ := parseJSCommand(thenCommand)
+				thenField += thenCommandString + "\n"
+			}
+		} else {
+			thenField, _ = parseJSCommand(commandMap["then"])
+		}
+		result += fmt.Sprintf("if(%s){\n%s}", conditionField, thenField)
+
+		_, elseExists := commandMap["else"]
+		if elseExists {
+			elseCommands, isList := commandMap["else"].([]interface{})
+			elseField := ""
+			if isList {
+				for _, elseCommand := range elseCommands {
+					elseCommandString, _ := parseJSCommand(elseCommand)
+					elseField += elseCommandString + "\n"
+				}
+			} else {
+				elseField, _ = parseJSCommand(commandMap["else"])
+			}
+			result += fmt.Sprintf("else{\n%s}", elseField)
+		}
 
 	case "for":
+		initialField, _ := parseJSCommand(commandMap["initial"])
+		conditionField, _ := parseJSCommand(commandMap["condition"])
+		incrementField, _ := parseJSCommand(commandMap["increment"])
+
+		commandsField := ""
+
+		commandsList, isList := commandMap["commands"].([]interface{})
+		if isList {
+			for _, singleCommand := range commandsList {
+				commandString, _ := parseJSCommand(singleCommand)
+				commandsField += commandString + "\n"
+			}
+		} else {
+			commandsField, _ = parseJSCommand(commandMap["commands"])
+		}
+
+		result += fmt.Sprintf("for(%s;%s;%s){\n%s}", initialField, conditionField, incrementField, commandsField)
 
 	case "return":
 		valueField, _ := parseJSCommand(commandMap["value"])
-		result += fmt.Sprint(valueField)
+		result += fmt.Sprintf("return %s;", valueField)
 
 	case "call":
+		functionField, _ := parseJSCommand(commandMap["function"])
+
+		parametersField := ""
+		parametersList, isList := commandMap["parameters"].([]interface{})
+		if isList {
+			for i, singleParam := range parametersList {
+				paramString, _ := parseJSCommand(singleParam)
+				parametersField += paramString
+				if i+1 < len(parametersList) {
+					parametersField += ","
+				}
+			}
+		} else {
+			parametersField, _ = parseJSCommand(commandMap["parameters"])
+		}
+		result += fmt.Sprintf("%s(%s);", functionField, parametersField)
 
 	case "function":
+		nameField, _ := parseJSCommand(commandMap["name"])
+
+		parametersField := ""
+		parametersList, isList := commandMap["parameters"].([]interface{})
+		if isList {
+			for i, singleParam := range parametersList {
+				paramString, _ := singleParam.(string)
+				parametersField += paramString
+				if i+1 < len(parametersList) {
+					parametersField += ","
+				}
+			}
+		} else {
+			parametersField, _ = parseJSCommand(commandMap["parameters"])
+		}
+
+		commandsField := ""
+		commandsList, isList := commandMap["commands"].([]interface{})
+		if isList {
+			for _, singleCommand := range commandsList {
+				commandString, _ := parseJSCommand(singleCommand)
+				commandsField += commandString + "\n"
+			}
+		} else {
+			commandsField, _ = parseJSCommand(commandMap["commands"])
+		}
+		result += fmt.Sprintf("function %s(%s){\n%s}", nameField, parametersField, commandsField)
 
 	default:
 		log.Fatalf("Unknown command type %s\n", commandType)
